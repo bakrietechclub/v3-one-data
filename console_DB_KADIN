@@ -1,0 +1,14 @@
+CREATE DATABASE db_kadin;
+USE db_kadin;
+
+SELECT * FROM working;
+SELECT WKUK FROM working WHERE INSTR(WKUK, 'Koordinator') = 0 GROUP BY WKUK;
+
+SELECT * FROM db_kadin.working WHERE WKUK LIKE '%Bidang Perekonomian%' AND WKU LIKE '%Bidang Perdagangan%';
+SELECT Komtap FROM db_kadin.working WHERE WKUK = 'Bidang Organisasi, Komunikasi dan Pemberdayaan Daerah (OKP)' AND WKU = 'Bidang Komunikasi dan Digital' GROUP BY Komtap;
+SELECT Wakomtap FROM db_kadin.working WHERE WKUK = 'Bidang Organisasi, Komunikasi dan Pemberdayaan Daerah (OKP)'
+                                        AND WKU = 'Bidang Komunikasi dan Digital'
+                                      AND Komtap = 'Pengembangan Infrastruktur Digital' GROUP BY Wakomtap;
+
+# ORGANIZATIONAL STRUCTURE DATA
+SELECT * FROM db_kadin.working WHERE WKUK = 'Bidang Organisasi, Komunikasi dan Pemberdayaan Daerah (OKP)' AND WKU = 'Bidang Komunikasi dan Digital';
