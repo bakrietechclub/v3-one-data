@@ -1,0 +1,494 @@
+# ENV PRODUCTION!
+
+SELECT * FROM tx_users WHERE tx_users.email LIKE '%ane%';
+SELECT * FROM tx_users_detail WHERE tx_users_detail.first_name LIKE '%cut%';
+SELECT * FROM master_third_tier_program;
+SELECT * FROM `tx_offered_program` WHERE  created_at >= '2024-11-29' AND updated_at <= '2024-11-30';
+SELECT * FROM `tx_users_bcf`;
+UPDATE tx_users_bcf SET password='$2a$10$FMPjBguJKLzB43dbkkT.GecyIliIt8axsWR1v.QpubI9wqQqbIqNu';
+SELECT * FROM tx_clp_users WHERE id=737;
+
+INSERT INTO tx_lead_institutions (name, id_lead_institutions_type) VALUES ('Yayasan Pembina Matematika dan IPA (YPMIPA)', 2);
+SELECT * FROM tx_lead_institutions;
+
+SELECT OP.id_third_tier_program FROM tx_offered_program OP
+         INNER JOIN tx_users U ON U.id = OP.id_users
+         WHERE OP.created_at > '2024-12-05';
+
+UPDATE tx_offered_program SET id_third_tier_program = 1 WHERE tx_offered_program.created_at > '2024-12-05';
+
+SELECT * FROM master_third_tier_program;
+
+SELECT * FROM `tx_clp_users` WHERE id_batch=2 ORDER BY updated_at ASC;
+
+SELECT TUD.first_name, TUD.last_name FROM `tx_clp_users` TCU INNER JOIN
+    `tx_users_detail` TUD ON TCU.id_users = TUD.id
+    WHERE TCU.updated_at <= '2024-11-28' AND TCU.id_batch=2;
+
+SELECT * FROM tx_offered_program WHERE id_batch=2;
+
+SELECT TUD.first_name AS 'First Name', TUD.last_name AS 'Last Name', MTTP.name AS 'Program (Magang/Praktikum)',
+       MUU.name AS 'Jurusan', MU.name AS 'Asal Universitas', TUU.nim AS 'NIM',
+       TUD.id_card_number AS 'NIK', TUD.bank_account_number AS 'Nomor Rekening',
+       TUD.bank_name AS 'Nama Bank', TUD.bank_name AS 'Atas Nama', MLD.name AS 'Divisi',
+       TLI.name AS 'Lembaga Penempatan', MDP.name AS 'Kota/Kab Penempatan',
+       TCU.id_card_selfie AS 'Foto Diri untuk ID Card dan Graduation'
+FROM tx_users_detail TUD
+JOIN tx_users_universities TUU ON TUU.id_users = TUD.id
+JOIN tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN master_universities MU ON TUM.id_universities = MU.id
+JOIN tx_clp_users TCU ON TCU.id_users = TUD.id
+JOIN tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+JOIN master_domicile_provincies MDP ON MDP.id = TLI.id_provincies
+JOIN tx_offered_program TOP ON TOP.id_users = TUD.id
+JOIN master_third_tier_program MTTP ON MTTP.id = TOP.id_third_tier_program
+WHERE TOP.id_batch = 2;
+
+SELECT * FROM master_clp_classifications_final_hs WHERE id_lead_division_institutions=132;
+DELETE FROM master_clp_classifications_final_hs WHERE id IN (351, 352, 353, 354,355);
+
+SELECT * FROM master_lead_division;
+
+SELECT * FROM tx_clp_evaluations_final_ss WHERE id_clp_final_evaluations=668;
+
+SELECT id, id_users, semester, updated_at FROM tx_clp_users WHERE id_batch = 1 AND updated_at BETWEEN '2024-11-28' AND NOW() ORDER BY updated_at ASC;
+SELECT id, id_users, semester, updated_at FROM tx_clp_users WHERE id_batch = 1 ORDER BY updated_at ASC;
+
+# POP TB (389) IT Development DAN STOP TB (390)
+SELECT * FROM tx_lead_institutions;
+# IT Development (32) DAN Media & Strategic Communications (27)
+SELECT * FROM master_lead_division;
+SELECT * FROM tx_lead_division_institutions WHERE id_lead_institution=390 AND id_lead_division=27;
+SELECT * FROM tx_clp_users WHERE id=481;
+SELECT * FROM master_clp_classifications_final_hs WHERE id_lead_division_institutions=261;
+SELECT * FROM tx_clp_evaluations_pat_final WHERE id_clp_users=9;
+SELECT * FROM master_clp_classifications_final_bcf;
+SELECT * FROM tx_clp_evaluations_final WHERE id IN (475, 476, 575) ;
+
+SELECT id_clp_final_evaluations, id_clp_kpi_hs FROM tx_clp_evaluations_final_hs WHERE id_clp_final_evaluations IN(476, 590);
+
+SELECT * FROM tx_clp_evaluations_final_hs WHERE id_clp_final_evaluations IN (9, 14);
+
+SELECT * FROM master_clp_classifications_final_hs WHERE id_lead_division_institutions=135;
+
+SELECT * FROM master_universities;
+SELECT * FROM tx_universities_major WHERE id_universities=4;
+
+SELECT TUM.id, TUM.id_universities, MAM.name FROM tx_universities_major TUM
+    JOIN master_universities_major MAM ON MAM.id = TUM.id_major
+                        WHERE TUM.id_universities IN(4);
+# UI-FISIP 200, 13, 20, 251
+SELECT TU.id AS 'usersId', TOP.id_batch AS 'Batch', TUD.first_name AS 'First Name', TUD.last_name AS 'Last Name', MTTP.name AS 'Program (Magang/Praktikum)',
+       TUD.phone_number AS 'No HP', TU.email AS 'E-mail', MDPTUDOM.name AS 'Provinsi Domisili',
+       MUU.name AS 'Jurusan', MU.name AS 'Asal Universitas', MUDOM.name AS 'Provinsi Universitas', TUU.nim AS 'NIM',
+       TUD.id_card_number AS 'NIK', TUD.bank_account_number AS 'Nomor Rekening',
+       TUD.bank_name AS 'Nama Bank', TUD.bank_name AS 'Atas Nama', MLD.name AS 'Divisi',
+       TLI.name AS 'Lembaga Penempatan', MDP.name AS 'Provinsi Penempatan',
+       TCU.id_card_selfie AS 'Foto Diri untuk ID Card dan Graduation'
+FROM tx_users_detail TUD
+JOIN tx_users TU ON TU.id = TUD.id
+JOIN (
+    SELECT id_users, MIN(id) AS min_id
+    FROM tx_users_domicile WHERE tx_users_domicile.status = 'CURRENT'
+    GROUP BY id_users
+) TUDOM_UNIQUE ON TUDOM_UNIQUE.id_users = TUD.id
+JOIN tx_users_domicile TUDOM ON TUDOM.id = TUDOM_UNIQUE.min_id
+JOIN master_domicile_provincies MDPTUDOM ON MDPTUDOM.id = TUDOM.id_provincies
+# JOIN tx_users_domicile TUDOM ON TUDOM.id_users = TUD.id
+# JOIN master_domicile_provincies MDPTUDOM ON MDPTUDOM.id = TUDOM.id_provincies
+JOIN tx_users_universities TUU ON TUU.id_users = TUD.id
+JOIN tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN master_universities MU ON TUM.id_universities = MU.id
+JOIN master_domicile_provincies MUDOM ON MUDOM.id = MU.id_province
+JOIN tx_clp_users TCU ON TCU.id_users = TUD.id
+JOIN tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+JOIN master_domicile_provincies MDP ON MDP.id = TLI.id_provincies
+JOIN tx_offered_program TOP ON TOP.id_users = TUD.id
+JOIN master_third_tier_program MTTP ON MTTP.id = TOP.id_third_tier_program
+WHERE TOP.id_batch = 2;
+
+SELECT
+    TOP.id_batch AS 'Batch',
+    TUD.first_name AS 'First Name',
+    TUD.last_name AS 'Last Name',
+    MTTP.name AS 'Program (Magang/Praktikum)',
+    TUD.phone_number AS 'No HP',
+    TU.email AS 'E-mail',
+    -- Separate columns for Provinsi KTP and Provinsi CURRENT
+    MAX(CASE WHEN TUDOM.status = 'KTP' THEN MDPTUDOM.name END) AS 'Provinsi KTP',
+    MAX(CASE WHEN TUDOM.status = 'CURRENT' THEN MDPTUDOM.name END) AS 'Provinsi Saat Ini',
+    MUU.name AS 'Jurusan',
+    MU.name AS 'Asal Universitas',
+    MUDOM.name AS 'Provinsi Universitas',
+    TUU.nim AS 'NIM',
+    TUD.id_card_number AS 'NIK',
+    TUD.bank_account_number AS 'Nomor Rekening',
+    TUD.bank_name AS 'Nama Bank',
+    TUD.bank_name AS 'Atas Nama',
+    MLD.name AS 'Divisi',
+    TLI.name AS 'Lembaga Penempatan',
+    MDP.name AS 'Provinsi Penempatan',
+    TCU.id_card_selfie AS 'Foto Diri untuk ID Card dan Graduation'
+FROM
+    tx_users_detail TUD
+JOIN
+    tx_users TU ON TU.id = TUD.id
+JOIN
+    tx_users_domicile TUDOM ON TUDOM.id_users = TUD.id
+JOIN
+    master_domicile_provincies MDPTUDOM ON MDPTUDOM.id = TUDOM.id_provincies
+JOIN
+    tx_users_universities TUU ON TUU.id_users = TUD.id
+JOIN
+    tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN
+    master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN
+    master_universities MU ON TUM.id_universities = MU.id
+JOIN
+    master_domicile_provincies MUDOM ON MUDOM.id = MU.id_province
+JOIN
+    tx_clp_users TCU ON TCU.id_users = TUD.id
+JOIN
+    tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN
+    master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN
+    tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+JOIN
+    master_domicile_provincies MDP ON MDP.id = TLI.id_provincies
+JOIN
+    tx_offered_program TOP ON TOP.id_users = TUD.id
+JOIN
+    master_third_tier_program MTTP ON MTTP.id = TOP.id_third_tier_program
+WHERE
+    TOP.id_batch = 3
+GROUP BY
+    TOP.id_batch, TUD.first_name, TUD.last_name, MTTP.name,
+    TUD.phone_number, TU.email, MUU.name, MU.name, MUDOM.name, TUU.nim,
+    TUD.id_card_number, TUD.bank_account_number, TUD.bank_name, MLD.name,
+    TLI.name, MDP.name, TCU.id_card_selfie;
+
+
+SELECT * FROM tx_users_universities TUU WHERE TUU.id_major_universities IN(200, 13, 20);
+
+SELECT * FROM tx_clp_evaluations_final_bcf WHERE id_clp_kpi_bcf = 8;
+
+UPDATE tx_clp_evaluations_final_bcf
+SET note='Penilaian oleh sesama rekan mahasiswa dalam satu divisi terhadap aspek: 1) kontribusi akademik, 2) kontribusi non-akademik, 3) kontribusi softskill, 4) kehadiran, dan 5) kesesuaian kinerja dengan benefit kegiatan'
+WHERE id_clp_kpi_bcf = 8;
+
+SELECT * FROM tx_lead_institutions_locations;
+
+CREATE DATABASE one_data_v3_1;
+USE one_data_v3_1;
+SELECT COUNT(*) FROM master_universities;
+
+SELECT * FROM one_data_v3_1.master_clp_classifications_final_hs WHERE id_lead_division_institutions=267;
+SELECT * FROM one_data_v3_1.master_lead_division;
+SELECT * FROM one_data_v3_1.tx_lead_division_institutions WHERE id_batch=3 AND id_lead_division=53;
+SELECT * FROM tx_lead_division_institutions_requirements where id_lead_division_institutions=281;
+
+INSERT INTO master_lead_division (name) VALUES
+('Marketing Development');
+
+SELECT * FROM tx_clp_users WHERE id_batch=2;
+
+SELECT DATE(created_at) AS created_date, COUNT(*) AS total_users
+FROM tx_clp_users
+WHERE id_batch = 3
+GROUP BY created_date
+ORDER BY created_date;
+
+SELECT * FROM tx_users WHERE email='arif.pku@pkbiriau.or.id';
+SELECT id, referral FROM tx_clp_users WHERE id_batch=3;
+SELECT * FROM tx_clp_evaluations_final WHERE id=676;
+SELECT * FROM tx_clp_evaluations_final_hs WHERE id_clp_final_evaluations=669;
+
+SELECT * FROM one_data_v3_1.master_clp_classifications_final_hs WHERE id_lead_division_institutions=244;
+
+ALTER TABLE `tx_clp_users` ADD `referral` TEXT NULL AFTER `id_card_selfie`;
+
+INSERT INTO master_universities (name, type) VALUES ('Universitas Budhi Dharma', 'PTS'); #995
+SELECT * FROM master_universities WHERE name LIKE '%Budhi%';
+SELECT COUNT(*) FROM master_universities_major;
+SELECT * FROM master_universities_major WHERE name LIKE '%Teknik Perangkat Lunak%';
+INSERT INTO master_universities_major (name) VALUES ('Teknik Perangkat Lunak');
+# 26 - AKUNTANSI
+# 143 - Bahasa Inggris
+# 108 -  Ilmu Administrasi Niaga
+# 20 - Teknik Informatika
+# 18 - Ilmu Komunikasi
+# 14 - Manajemen
+# 8 - Sistem Informasi
+# 29 - Sastra Inggris
+# 150 - Teknik Elektro
+# 54 - Teknik Industri
+# 622 - Teknik Perangkat Lunak
+
+SELECT id FROM `master_universities_major` WHERE `name` = 'Sistem Informasi';
+
+INSERT INTO tx_universities_major (id_universities, id_major) VALUES
+                                  (995, 26),
+                                  (995, 143),
+                                  (995, 108),
+                                  (995, 20),
+                                  (995, 18),
+                                  (995, 14),
+                                  (995, 8),
+                                  (995, 29),
+                                  (995, 150),
+                                  (995, 54),
+                                  (995, 622);
+
+SELECT id, id_users, referral FROM tx_clp_users WHERE referral IS NOT NULL;
+
+SELECT
+    mu.id AS university_id,
+    mu.name AS university_name,
+    tuu.id_batch,
+    COUNT(tuu.id) AS user_count
+FROM tx_users_universities tuu
+JOIN tx_universities_major tum ON tuu.id_major_universities = tum.id
+JOIN master_universities mu ON tum.id_universities = mu.id
+WHERE tuu.id_batch = 3
+GROUP BY mu.id, tuu.id_batch;
+
+SELECT
+    mu.id AS university_id,
+    mu.name AS university_name,
+    mum.id AS major_id,
+    mum.name AS major_name,
+    COUNT(tuu.id) AS user_count
+FROM tx_users_universities tuu
+JOIN tx_universities_major tum ON tuu.id_major_universities = tum.id
+JOIN master_universities mu ON tum.id_universities = mu.id
+JOIN master_universities_major mum ON tum.id_major = mum.id
+GROUP BY mu.id, mum.id;
+
+SELECT * FROM tx_clp_users WHERE id=578;
+SELECT * FROM one_data_v3_1.tx_users_detail WHERE id=619;
+
+SELECT
+    DATE_FORMAT(a.created_at, '%Y-%m-%d') AS created_date,
+    COUNT(a.id) AS total_users_clp,
+    COUNT(b.id) AS total_users
+FROM
+    tx_clp_users a
+RIGHT JOIN
+    tx_users b ON DATE(a.created_at) = DATE(b.created_at)
+WHERE
+    a.id_batch = 3
+GROUP BY
+    created_date
+ORDER BY
+    created_date;
+
+SELECT
+    created_date,
+    total_users_clp,
+    (SELECT COUNT(*) FROM tx_users u WHERE DATE(u.created_at) = t.created_date) AS total_users
+FROM (
+    SELECT
+        DATE_FORMAT(created_at, '%Y-%m-%d') AS created_date,
+        COUNT(*) AS total_users_clp
+    FROM
+        tx_clp_users
+    WHERE
+        id_batch = 3
+    GROUP BY
+        created_date
+) t
+ORDER BY
+    created_date;
+
+SELECT
+    DATE_FORMAT(u.created_at, '%Y-%m-%d') AS created_date,
+    COUNT(DISTINCT u.id) AS total_users,
+    COUNT(DISTINCT c.id) AS total_users_clp
+FROM
+    tx_users u
+INNER JOIN
+    tx_clp_users c
+    ON DATE(u.created_at) = DATE(c.created_at)
+    AND c.id_batch = 3
+GROUP BY
+    created_date
+ORDER BY
+    created_date;
+
+SELECT
+    email, created_at AS register_at
+FROM
+    tx_users
+WHERE
+    created_at
+BETWEEN
+    '2025-02-05 00:00:00'
+AND
+    '2025-02-18 23:59:59';
+
+SELECT
+    email, created_at AS register_at
+FROM
+    tx_users
+WHERE
+    created_at
+BETWEEN
+    '2025-02-19 00:00:00'
+AND
+    NOW();
+
+SELECT id, id_lead_division_institutions FROM one_data_v3_1.tx_clp_users WHERE id=947;
+
+SELECT
+    TOP.id_batch AS 'Batch',
+    TUD.first_name AS 'First Name',
+    TUD.last_name AS 'Last Name',
+    MTTP.name AS 'Program (Magang/Praktikum)',
+    TUD.phone_number AS 'No HP',
+    TU.email AS 'E-mail',
+    -- Separate columns for Provinsi KTP and Provinsi CURRENT
+    MAX(CASE WHEN TUDOM.status = 'KTP' THEN MDPTUDOM.name END) AS 'Provinsi KTP',
+    MAX(CASE WHEN TUDOM.status = 'CURRENT' THEN MDPTUDOM.name END) AS 'Provinsi Saat Ini',
+    MUU.name AS 'Jurusan',
+    MU.name AS 'Asal Universitas',
+    MUDOM.name AS 'Provinsi Universitas',
+    TUU.nim AS 'NIM',
+    TUD.id_card_number AS 'NIK',
+    TUD.bank_account_number AS 'Nomor Rekening',
+    TUD.bank_name AS 'Nama Bank',
+    TUD.bank_name AS 'Atas Nama',
+    MLD.name AS 'Divisi',
+    TLI.name AS 'Lembaga Penempatan',
+    MDP.name AS 'Provinsi Penempatan',
+    TCU.id_card_selfie AS 'Foto Diri untuk ID Card dan Graduation'
+FROM
+    tx_users_detail TUD
+JOIN
+    tx_users TU ON TU.id = TUD.id
+JOIN
+    tx_users_domicile TUDOM ON TUDOM.id_users = TUD.id
+JOIN
+    master_domicile_provincies MDPTUDOM ON MDPTUDOM.id = TUDOM.id_provincies
+JOIN
+    tx_users_universities TUU ON TUU.id_users = TUD.id
+JOIN
+    tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN
+    master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN
+    master_universities MU ON TUM.id_universities = MU.id
+JOIN
+    master_domicile_provincies MUDOM ON MUDOM.id = MU.id_province
+JOIN
+    tx_clp_users TCU ON TCU.id_users = TUD.id
+JOIN
+    tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN
+    master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN
+    tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+JOIN
+    master_domicile_provincies MDP ON MDP.id = TLI.id_provincies
+JOIN
+    tx_offered_program TOP ON TOP.id_users = TUD.id
+JOIN
+    master_third_tier_program MTTP ON MTTP.id = TOP.id_third_tier_program
+WHERE
+    TCU.id_batch = 3
+GROUP BY
+    TOP.id_batch, TUD.first_name, TUD.last_name, MTTP.name,
+    TUD.phone_number, TU.email, MUU.name, MU.name, MUDOM.name, TUU.nim,
+    TUD.id_card_number, TUD.bank_account_number, TUD.bank_name, MLD.name,
+    TLI.name, MDP.name, TCU.id_card_selfie;
+
+SELECT * FROM tx_clp_users WHERE id_batch=3;
+
+SELECT
+    TU.email,
+    TUD.first_name AS 'First Name',
+    TUD.last_name AS 'Last Name',
+    TUD.phone_number AS 'No Telp',
+    MUU.name AS 'Jurusan',
+    MU.name AS 'Asal Universitas',
+    MLD.name AS 'Divisi',
+    TLI.name AS 'Lembaga Penempatan',
+    TCU.curriculum_vitae AS 'CV',
+    TCU.academic_transcript AS 'Transcript',
+    TCU.portfolio AS 'Portofolio',
+    TCU.eligibility_from_university AS 'Surat Universitas',
+    TCU.organization_certificate_one AS 'Sertifikat Organisasi',
+    TCU.referral AS 'Refferal'
+FROM tx_clp_users TCU
+JOIN tx_users TU ON TU.id = TCU.id_users
+JOIN tx_users_detail TUD ON TUD.id = TU.id
+JOIN tx_users_universities TUU ON TUU.id_users = TCU.id_users AND TUU.id_batch = TCU.id_batch
+JOIN tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN master_universities MU ON TUM.id_universities = MU.id
+JOIN
+    tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN
+    master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN
+    tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+WHERE TCU.id_batch=3;
+
+SELECT id, id_lead_division_institutions FROM one_data_v3_1.tx_clp_users WHERE id IN (877);
+
+SELECT
+        DATE_FORMAT(c.created_at, '%Y-%m-%d') AS created_date,
+        COUNT(DISTINCT u.id) AS total_users,
+        COUNT(DISTINCT c.id) AS total_users_clp
+      FROM
+        tx_clp_users c
+      RIGHT JOIN
+        tx_users u
+      ON
+        DATE(u.created_at) = DATE(c.created_at)
+      WHERE
+        c.id_batch = 3
+      GROUP BY
+        created_date
+      ORDER BY
+        created_date;
+
+SELECT
+    TUU.nim AS 'NIM',
+    TU.email,
+    TUD.first_name AS 'First Name',
+    TUD.last_name AS 'Last Name',
+    MUU.name AS 'Program Studi',
+    MU.name AS 'Asal Universitas',
+    MLD.name AS 'Divisi Magang',
+    TLI.name AS 'Lembaga Penempatan'
+FROM tx_clp_users TCU
+JOIN tx_users TU ON TU.id = TCU.id_users
+JOIN tx_users_detail TUD ON TUD.id = TU.id
+JOIN tx_users_universities TUU ON TUU.id_users = TCU.id_users AND TUU.id_batch = TCU.id_batch
+JOIN tx_offered_program TOP on TOP.id_users = TCU.id_users AND TOP.id_batch = TCU.id_batch
+JOIN tx_universities_major TUM ON TUU.id_major_universities = TUM.id
+JOIN master_universities_major MUU ON TUM.id_major = MUU.id
+JOIN master_universities MU ON TUM.id_universities = MU.id
+JOIN
+    tx_lead_division_institutions TLDI ON TLDI.id = TCU.id_lead_division_institutions
+JOIN
+    master_lead_division MLD ON MLD.id = TLDI.id_lead_division
+JOIN
+    tx_lead_institutions TLI ON TLI.id = TLDI.id_lead_institution
+WHERE TOP.id_batch=3 AND TOP.id_status_acceptance_program IN (4,6);
+
+SELECT * FROM master_status_acceptance_program;
+
+SELECT * FROM master_universities_major WHERE name LIKE '%Informatika%';
+
+SELECT MU.name, TUM.id_major FROM tx_universities_major TUM
+         JOIN one_data_v3_1.master_universities MU ON TUM.id_universities = MU.id
+         WHERE TUM.id_major = 32;
