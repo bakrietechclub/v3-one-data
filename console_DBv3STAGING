@@ -1,0 +1,89 @@
+# ENV STAGING!
+
+DROP DATABASE one_data_v3;
+
+CREATE DATABASE one_data_v3;
+
+USE one_data_v3;
+SELECT * FROM tx_users;
+SELECT COUNT(*) FROM tx_users;
+DELETE FROM tx_users WHERE id>815;
+SELECT * FROM tx_users WHERE email='galuhskar04@student.ub.ac.id';
+SELECT * FROM tx_users_bcf;
+
+SELECT * FROM tx_lead_institutions;
+INSERT INTO tx_lead_institutions (name, id_lead_institutions_type) VALUES ('Yayasan Pembina Matematika dan IPA (YPMIPA)', 2);
+
+DELETE FROM tx_clp_users WHERE id IN (739, 752, 755);
+
+ALTER TABLE `tx_status_acceptance_program_history` CHANGE `created_at` `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `tx_status_acceptance_program_history` CHANGE `updated_at` `updated_at` DATETIME on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `tx_users_detail` CHANGE `id_card_number` `id_card_number` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL;
+
+SELECT * FROM tx_users U
+         INNER JOIN tx_offered_program OP ON OP.id_users = U.id
+         WHERE U.email = 'mzulfanabdillah@gmail.com';
+
+SELECT * FROM tx_offered_program WHERE id_users=1;
+INSERT INTO tx_offered_program (id_users, id_status_acceptance_program, id_role, id_third_tier_program, id_batch)
+VALUES (1, 4, 4, 4, 2);
+
+# PAT
+SET FOREIGN_KEY_CHECKS = 0;
+ALTER TABLE `tx_clp_evaluations_pat_final` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
+SET FOREIGN_KEY_CHECKS = 1;
+
+# KPI
+ALTER TABLE `master_clp_classifications_final_bcf` ADD `id_batch` INT NOT NULL AFTER `id`, ADD INDEX (`id_batch`);
+SELECT * FROM `master_clp_classifications_final_bcf`;
+UPDATE master_clp_classifications_final_bcf SET id_batch=1;
+insert into master_clp_classifications_final_bcf (id_batch, classification)
+values  (2, 'Kuis 1 (Strategi Mengelola Kesehatan Mental)'),
+        (2, 'Kuis 2 (Penulisan Ilmiah)'),
+        (2, 'Penilaian Antar Teman'),
+        (2, 'Paper Konferensi Nasional'),
+        (2, 'Kuis 3 (SDGs dan Sustainability)');
+
+ALTER TABLE `master_clp_classifications_final_ss` ADD `id_batch` INT NOT NULL AFTER `id`, ADD INDEX (`id_batch`);
+SELECT * FROM `master_clp_classifications_final_ss`;
+UPDATE master_clp_classifications_final_ss SET id_batch=1;
+insert into master_clp_classifications_final_ss (id_batch, classification)
+values  (2, 'Berkomunikasi yang Baik'),
+        (2, 'Bekerjasama dalam Tim'),
+        (2, 'Toleransi terhadap Perbedaan'),
+        (2, 'Peduli Terhadap Kesusahan Orang Lain'),
+        (2, 'Peka Terhadap Situasi Sekitar');
+
+ALTER TABLE `master_clp_classification_pat` ADD `id_batch` INT NOT NULL AFTER `id`, ADD INDEX (`id_batch`);
+SELECT * FROM `master_clp_classification_pat`;
+UPDATE master_clp_classification_pat SET id_batch=1;
+
+ALTER TABLE `master_clp_classifications_final_hs` ADD `id_batch` INT NOT NULL AFTER `id`, ADD INDEX (`id_batch`);
+UPDATE master_clp_classifications_final_hs SET id_batch=1;
+SELECT * FROM `master_clp_classifications_final_hs`;
+
+SELECT * FROM master_batch;
+
+SELECT TLI.id AS institutionsId, TLI.name AS name, TLI.location AS location, TLI.id_provincies AS id_provincies FROM tx_lead_institutions TLI INNER JOIN tx_lead_division_institutions TLDI
+      ON TLDI.id_lead_institution = TLI.id
+      INNER JOIN tx_clp_mentors_division_institutions TCMDI ON TCMDI.id_lead_division_institutions = TLDI.id
+      WHERE TCMDI.id_clp_mentors = 2239 GROUP BY TLI.id, TLI.name, TLI.location, TLI.id_provincies;
+
+SELECT * FROM tx_clp_mentors_division_institutions;
+
+DROP DATABASE one_data_v3;
+CREATE DATABASE one_data_v3;
+
+SELECT id_batch FROM `tx_lead_division_institutions` WHERE id_lead_institution=388 GROUP BY id_batch;
+
+SELECT TLIL.id_provincies
+FROM `tx_lead_institutions_locations` TLIL
+INNER JOIN `tx_lead_division_institutions` TLDI
+ON TLIL.id_institutions = TLDI.id_lead_institution
+WHERE TLDI.id_batch = 3
+GROUP BY TLIL.id_provincies;
+
+SELECT * FROM tx_lead_institutions_locations WHERE id_provincies=11;
+
+ALTER TABLE `tx_clp_users` ADD `referral` TEXT NULL AFTER `id_card_selfie`;
+SELECT * FROM tx_clp_users WHERE referral IS NOT NULL;
